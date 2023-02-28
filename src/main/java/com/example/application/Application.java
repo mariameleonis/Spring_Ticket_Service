@@ -13,6 +13,7 @@ public class Application {
     val context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
     val bookingFacade = context.getBean(BookingFacadeImpl.class);
     log.info(bookingFacade.getUsersByName("Joh", 2, 1).toString());
+    context.close();
   }
 
 }
