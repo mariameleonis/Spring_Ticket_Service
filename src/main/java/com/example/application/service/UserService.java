@@ -9,15 +9,19 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
 
 @Slf4j
-@RequiredArgsConstructor
+@Service
 public class UserService {
 
-  private final UserDao userDao;
+  @Autowired
+  private UserDao userDao;
 
-  private final ApplicationEventPublisher eventPublisher;
+  @Autowired
+  private ApplicationEventPublisher eventPublisher;
 
   public User getUserByEmail(String email) throws BusinessException {
     log.info("Getting user by email: {}", email);
@@ -50,7 +54,7 @@ public class UserService {
     val deleted = userDao.deleteById(userId);
 
     if (deleted) {
-      log.debug("Publishing event deleted user with id: {}", userId);
+      log.info("Publishing event deleted user with id: {}", userId);
       eventPublisher.publishEvent(new UserDeletedEvent(userId));
     }
 

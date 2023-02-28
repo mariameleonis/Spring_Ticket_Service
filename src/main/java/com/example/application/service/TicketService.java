@@ -3,15 +3,17 @@ package com.example.application.service;
 import com.example.application.dao.TicketDao;
 import com.example.application.model.Ticket;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
+@Service
 @Slf4j
 public class TicketService {
 
-  private final TicketDao ticketDao;
+  @Autowired
+  private TicketDao ticketDao;
 
   public Ticket bookTicket(Ticket ticket) {
     log.info("Booking ticket: {}", ticket);

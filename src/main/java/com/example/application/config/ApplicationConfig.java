@@ -7,13 +7,7 @@ import com.example.application.model.Category;
 import com.example.application.model.Event;
 import com.example.application.model.Ticket;
 import com.example.application.model.User;
-import com.example.application.service.EventService;
 import com.example.application.service.RandomIdGenerator;
-import com.example.application.service.TicketService;
-import com.example.application.service.TicketValidator;
-import com.example.application.service.UserService;
-import com.example.application.service.facade.BookingFacade;
-import com.example.application.service.facade.impl.BookingFacadeImpl;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,13 +19,14 @@ import lombok.val;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
+@ComponentScan("com.example.application")
 @Slf4j
 @PropertySource("classpath:application.properties")
 public class ApplicationConfig {
@@ -60,33 +55,8 @@ public class ApplicationConfig {
   }
 
   @Bean
-  public UserService userService(ApplicationEventPublisher publisher) {
-    return new UserService(userDao(), publisher);
-  }
-
-  @Bean
-  public EventService eventService(ApplicationEventPublisher publisher) {
-    return new EventService(eventDao(), publisher);
-  }
-
-  @Bean
-  public TicketService ticketService() {
-    return new TicketService(ticketDao());
-  }
-
-  @Bean
-  public TicketValidator ticketValidator() {
-    return new TicketValidator(ticketDao());
-  }
-
-  @Bean
   public RandomIdGenerator idGenerator() {
     return new RandomIdGenerator();
-  }
-
-  @Bean
-  public BookingFacade bookingFacade(ApplicationEventPublisher publisher) {
-    return new BookingFacadeImpl(eventService(publisher), ticketService(), userService(publisher), idGenerator(), ticketValidator());
   }
 
   @Bean

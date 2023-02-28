@@ -7,18 +7,21 @@ import com.example.application.service.exception.BusinessException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
+@Service
 @Slf4j
 public class EventService {
 
-  private final EventDao eventDao;
+  @Autowired
+  private EventDao eventDao;
 
-  private final ApplicationEventPublisher eventPublisher;
+  @Autowired
+  private ApplicationEventPublisher eventPublisher;
 
   public Event getById(long eventId) throws BusinessException {
     log.debug("Getting event by ID: {}", eventId);
@@ -59,6 +62,7 @@ public class EventService {
   }
 
   public List<Event> getByIds(Set<Long> eventIds) {
+    log.debug("Getting events by ids: {}", eventIds);
     return eventDao.getByIds(eventIds);
   }
 }
