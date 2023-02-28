@@ -6,7 +6,6 @@ import com.example.application.service.event.UserDeletedEvent;
 import com.example.application.service.exception.BusinessException;
 import java.util.List;
 import java.util.Set;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
