@@ -294,7 +294,7 @@ class BookingFacadeImplTest {
     when(idGenerator.getRandomLongId()).thenReturn(4L);
     when(ticketService.bookTicket(any(Ticket.class))).thenReturn(ticket);
 
-    val actualTicket = bookingFacade.bookTicket(userId, eventId, place, category);
+    val actualTicket = bookingFacade.bookTicket(userId, eventId, place);
 
     verify(validator).validate(ticket);
     verify(ticketService).bookTicket(ticket);
