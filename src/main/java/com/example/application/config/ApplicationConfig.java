@@ -3,7 +3,6 @@ package com.example.application.config;
 import com.example.application.dao.EventDao;
 import com.example.application.dao.TicketDao;
 import com.example.application.dao.UserDao;
-import com.example.application.model.Category;
 import com.example.application.model.Event;
 import com.example.application.model.Ticket;
 import com.example.application.model.User;
@@ -123,7 +122,6 @@ public class ApplicationConfig {
           .id(Long.parseLong(parts[0]))
           .eventId(Long.parseLong(parts[1]))
           .userId(Long.parseLong(parts[2]))
-          .category(Category.valueOf(parts[3]))
           .place(Integer.parseInt(parts[4]))
           .build();
     }

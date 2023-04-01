@@ -1,6 +1,5 @@
 package com.example.application.service.facade.impl;
 
-import com.example.application.model.Category;
 import com.example.application.model.Event;
 import com.example.application.model.Ticket;
 import com.example.application.model.User;
@@ -119,19 +118,18 @@ public class BookingFacadeImpl implements BookingFacade {
   }
 
   @Override
-  public Ticket bookTicket(long userId, long eventId, int place, Category category) {
-    val ticket = createTicket(userId, eventId, place, category);
+  public Ticket bookTicket(long userId, long eventId, int place) {
+    val ticket = createTicket(userId, eventId, place);
     validator.validate(ticket);
     return ticketService.bookTicket(ticket);
   }
 
-  private Ticket createTicket(long userId, long eventId, int place, Category category) {
+  private Ticket createTicket(long userId, long eventId, int place) {
     return Ticket.builder()
         .id(idGenerator.getRandomLongId())
         .eventId(eventId)
         .userId(userId)
         .place(place)
-        .category(category)
         .build();
   }
 

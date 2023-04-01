@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.application.config.ApplicationConfig;
-import com.example.application.model.Category;
 import com.example.application.model.Event;
 import com.example.application.model.User;
 import com.example.application.service.facade.BookingFacade;
@@ -48,14 +47,14 @@ class BookingFacadeImplIntegrationTest {
 
     assertNotEquals(0, event.getId());
 
-    val ticket = bookingFacade.bookTicket(user.getId(), event.getId(), 2, Category.ECONOMY);
+    val ticket = bookingFacade.bookTicket(user.getId(), event.getId(), 2);
     assertNotEquals(0, ticket.getId());
 
     val canceled = bookingFacade.cancelTicket(ticket.getId());
 
     assertTrue(canceled);
 
-    bookingFacade.bookTicket(user.getId(), event.getId(), 3, Category.LUXURY);
+    bookingFacade.bookTicket(user.getId(), event.getId(), 3);
 
     bookingFacade.deleteUser(user.getId());
 

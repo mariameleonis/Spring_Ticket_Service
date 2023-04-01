@@ -1,6 +1,5 @@
 package com.example.application.service.facade;
 
-import com.example.application.model.Category;
 import com.example.application.model.Event;
 import com.example.application.model.Ticket;
 import com.example.application.model.User;
@@ -114,7 +113,7 @@ import java.util.List;
      * @return Booked ticket object.
      * @throws java.lang.IllegalStateException if this place has already been booked.
      */
-    Ticket bookTicket(long userId, long eventId, int place, Category category);
+    Ticket bookTicket(long userId, long eventId, int place);
 
     /**
      * Get all booked tickets for specified user. Tickets should be sorted by event date in descending order.

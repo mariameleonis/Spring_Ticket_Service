@@ -9,7 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.example.application.model.Category;
 import com.example.application.model.Event;
 import com.example.application.model.Ticket;
 import com.example.application.model.User;
@@ -283,7 +282,6 @@ class BookingFacadeImplTest {
     long userId = 1L;
     long eventId = 2L;
     int place = 3;
-    val category = Category.ECONOMY;
     val user = User.builder().id(userId).build();
     val event = Event.builder().id(eventId).build();
     val ticket = Ticket.builder()
@@ -291,7 +289,6 @@ class BookingFacadeImplTest {
         .userId(userId)
         .eventId(eventId)
         .place(place)
-        .category(category)
         .build();
 
     when(idGenerator.getRandomLongId()).thenReturn(4L);
@@ -309,8 +306,8 @@ class BookingFacadeImplTest {
   void testGetBookedTicketsByUser() {
     val user = User.builder().id(1L).build();
     val tickets = Arrays.asList(
-        Ticket.builder().id(1L).userId(1L).eventId(2L).place(3).category(Category.ECONOMY).build(),
-        Ticket.builder().id(2L).userId(1L).eventId(3L).place(4).category(Category.PREMIUM).build()
+        Ticket.builder().id(1L).userId(1L).eventId(2L).place(3).build(),
+        Ticket.builder().id(2L).userId(1L).eventId(3L).place(4).build()
     );
 
     when(ticketService.getBookedTicketsByUser(user.getId(), 2, 1))
@@ -334,8 +331,8 @@ class BookingFacadeImplTest {
     val event = Event.builder().id(eventId).build();
 
     val tickets = Arrays.asList(
-        Ticket.builder().id(1L).userId(1L).eventId(eventId).place(3).category(Category.ECONOMY).build(),
-        Ticket.builder().id(2L).userId(2L).eventId(eventId).place(4).category(Category.PREMIUM).build()
+        Ticket.builder().id(1L).userId(1L).eventId(eventId).place(3).build(),
+        Ticket.builder().id(2L).userId(2L).eventId(eventId).place(4).build()
     );
 
     when(ticketService.getBookedTicketsByEvent(eventId, 2, 1))
