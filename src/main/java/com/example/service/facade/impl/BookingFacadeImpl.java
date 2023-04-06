@@ -176,14 +176,6 @@ public class BookingFacadeImpl implements BookingFacade {
 
   @Override
   @Transactional
-  public void refillUserAccountByUserEmail(String email, BigDecimal amount)
-      throws BusinessException {
-    val userAccount = userAccountService.findByUserEmail(email);
-    refill(userAccount, amount);
-  }
-
-  @Override
-  @Transactional
   public void refillUserAccountByUserId(Long userId, BigDecimal amount)
       throws BusinessException {
     log.info("Refilling user account, user ID {}, amount {}", userId, amount);

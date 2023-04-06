@@ -28,14 +28,8 @@ class HibernateCacheTest {
   @Autowired
   private UserRepository userRepository;
 
-  @Autowired
-  private SessionFactory sessionFactory;
-
   @Test
   void testCache() {
-
-    val statistics = sessionFactory.getStatistics();
-    statistics.setStatisticsEnabled(true);
 
     val user1 = userRepository.findById(1L);
     assertTrue(user1.isPresent());

@@ -139,9 +139,7 @@ import java.util.List;
      */
     void cancelTicket(Long ticketId) throws BusinessException;
 
-    void refillUserAccountByUserEmail(String email, BigDecimal amount) throws BusinessException;
-
-    void refillUserAccountByUserId(Long userId, BigDecimal amount) throws BusinessException;
+  void refillUserAccountByUserId(Long userId, BigDecimal amount) throws BusinessException;
 
     UserAccount findUserAccountByUserId(Long userId) throws BusinessException;
 }
