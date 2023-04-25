@@ -1,6 +1,5 @@
 package com.example.repository;
 
-import com.example.entity.Event;
 import com.example.entity.Ticket;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

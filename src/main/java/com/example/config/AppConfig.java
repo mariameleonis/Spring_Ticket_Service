@@ -1,13 +1,14 @@
 package com.example.config;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
-import net.sf.ehcache.config.CacheConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -75,21 +76,17 @@ public class AppConfig {
   }
 
   @Bean
-  public CacheManager cacheManager() {
-    return new EhCacheCacheManager(ehCacheManager());
+  public CacheManager caffeineCacheManager() {
+    CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+    cacheManager.setCaffeine(caffeineCacheBuilder());
+    return cacheManager;
   }
 
-  @Bean(destroyMethod="shutdown")
-  public net.sf.ehcache.CacheManager ehCacheManager() {
-    CacheConfiguration cacheConfiguration = new CacheConfiguration();
-    cacheConfiguration.setName("myCache");
-    cacheConfiguration.setMaxEntriesLocalHeap(1000);
-    cacheConfiguration.setTimeToLiveSeconds(60);
-
-    net.sf.ehcache.config.Configuration configuration = new net.sf.ehcache.config.Configuration();
-    configuration.addCache(cacheConfiguration);
-
-    return net.sf.ehcache.CacheManager.newInstance(configuration);
+  private Caffeine<Object, Object> caffeineCacheBuilder() {
+    return Caffeine.newBuilder()
+        .expireAfterWrite(1800, TimeUnit.MINUTES)
+        .maximumSize(100)
+        .recordStats();
   }
 
   @Bean
