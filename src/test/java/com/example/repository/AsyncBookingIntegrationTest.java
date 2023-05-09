@@ -1,7 +1,7 @@
 package com.example.repository;
 
+import static com.example.config.RabbitMQTestConfiguration.RABBIT_MQ_CONTAINER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.example.config.RabbitMQTestConfiguration;
 import com.example.rest.model.Booking;
@@ -10,6 +10,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.GetResponse;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -28,6 +29,11 @@ class AsyncBookingIntegrationTest {
   @Autowired
   private ConnectionFactory connectionFactory;
 
+  @AfterAll
+  public static void stopContainer() {
+    RABBIT_MQ_CONTAINER.stop();
+  }
+
   @Test
   void testBooking() throws IOException, TimeoutException {
 
@@ -45,15 +51,10 @@ class AsyncBookingIntegrationTest {
 
     rabbitTemplate.convertAndSend(exchangeName, routingKey, booking);
 
-
-
     GetResponse response = channel.basicGet(queueName, true);
     Booking consumedBooking = new ObjectMapper().readValue(response.getBody(), Booking.class);
 
-    assertNotNull(consumedBooking);
-    assertEquals(1L, consumedBooking.getUserId());
-    assertEquals(123L, consumedBooking.getEventId());
-    assertEquals(6, consumedBooking.getPlace());
+    assertEquals(booking, consumedBooking);
 
     channel.getConnection().close();
     channel.close();
