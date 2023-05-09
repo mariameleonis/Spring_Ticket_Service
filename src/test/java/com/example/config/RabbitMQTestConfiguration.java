@@ -20,8 +20,8 @@ public class RabbitMQTestConfiguration {
   public ConnectionFactory connectionFactory() {
     RABBIT_MQ_CONTAINER.start();
     CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-    connectionFactory.setHost(RABBIT_MQ_CONTAINER.getContainerIpAddress());
-    connectionFactory.setPort(RABBIT_MQ_CONTAINER.getMappedPort(5672));
+    connectionFactory.setHost(RABBIT_MQ_CONTAINER.getHost());
+    connectionFactory.setPort(RABBIT_MQ_CONTAINER.getFirstMappedPort());
     connectionFactory.setUsername(RABBIT_MQ_CONTAINER.getAdminUsername());
     connectionFactory.setPassword(RABBIT_MQ_CONTAINER.getAdminPassword());
     return connectionFactory;
