@@ -6,6 +6,7 @@ import com.example.entity.User;
 import com.example.entity.UserAccount;
 import com.example.service.exception.BusinessException;
 import com.example.service.exception.EventNotFoundException;
+import com.example.service.exception.TicketNotFoundException;
 import com.example.service.exception.UserNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -137,9 +138,9 @@ import java.util.List;
      * Cancel ticket with a specified id.
      * @param ticketId Ticket id.
      */
-    void cancelTicket(Long ticketId) throws BusinessException;
+    void cancelTicket(Long ticketId) throws TicketNotFoundException, UserNotFoundException;
 
-  void refillUserAccountByUserId(Long userId, BigDecimal amount) throws BusinessException;
+    void refillUserAccountByUserId(Long userId, BigDecimal amount) throws BusinessException;
 
     UserAccount findUserAccountByUserId(Long userId) throws BusinessException;
 }

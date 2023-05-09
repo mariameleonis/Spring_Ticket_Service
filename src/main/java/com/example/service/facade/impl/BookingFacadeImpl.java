@@ -10,6 +10,7 @@ import com.example.service.UserAccountService;
 import com.example.service.UserService;
 import com.example.service.exception.BusinessException;
 import com.example.service.exception.EventNotFoundException;
+import com.example.service.exception.TicketNotFoundException;
 import com.example.service.exception.UserNotFoundException;
 import com.example.service.facade.BookingFacade;
 import java.math.BigDecimal;
@@ -167,8 +168,14 @@ public class BookingFacadeImpl implements BookingFacade {
 
   @Override
   @Transactional
-  public void cancelTicket(Long ticketId) throws BusinessException {
-    val ticketToCancel = ticketService.findById(ticketId);
+  public void cancelTicket(Long ticketId) throws TicketNotFoundException, UserNotFoundException {
+    Ticket ticketToCancel;
+    try {
+      ticketToCancel = ticketService.findById(ticketId);
+    } catch (BusinessException e) {
+      log.error("Error cancelling ticket", e);
+      throw new TicketNotFoundException(ticketId, e);
+    }
     refillUserAccountByUserId(ticketToCancel.getUser().getId(), ticketToCancel.getEvent()
         .getTicketPrice());
     ticketService.cancelTicket(ticketId);
@@ -177,9 +184,15 @@ public class BookingFacadeImpl implements BookingFacade {
   @Override
   @Transactional
   public void refillUserAccountByUserId(Long userId, BigDecimal amount)
-      throws BusinessException {
+      throws UserNotFoundException {
     log.info("Refilling user account, user ID {}, amount {}", userId, amount);
-    val userAccount = userAccountService.findByUserId(userId);
+    UserAccount userAccount;
+    try {
+      userAccount = userAccountService.findByUserId(userId);
+    } catch (BusinessException e) {
+      log.error("Error refilling user account by userId", e);
+      throw new UserNotFoundException(userId, e);
+    }
     refill(userAccount, amount);
   }
 
