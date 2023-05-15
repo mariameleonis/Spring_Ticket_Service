@@ -9,6 +9,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,14 +25,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/tickets")
 public class TicketController {
+  @Value("${rabbitmq.booking_exchange}")
+  private String bookingExchange;
 
+  @Value("${rabbitmq.routing_key}")
+  private String routingKey;
+
+  public static final String BOOKING_REQUEST_SENT = "Booking request sent";
+  public static final String TICKET_CANCELLED = "Ticket with ID %d cancelled successfully";
   private final BookingFacade bookingFacade;
   private final RabbitTemplate rabbitTemplate;
 
   @PostMapping
-  public String bookTicket(@RequestBody Booking booking) {
-    rabbitTemplate.convertAndSend("booking-exchange", "my-routing-key", booking);
-    return "Booking request sent";
+  public ResponseEntity<String> bookTicket(@RequestBody Booking booking) {
+    rabbitTemplate.convertAndSend(bookingExchange, routingKey, booking);
+    return ResponseEntity.ok(BOOKING_REQUEST_SENT);
   }
 
   @GetMapping("/user/{userId}")
@@ -67,6 +76,6 @@ public class TicketController {
 
     bookingFacade.cancelTicket(ticketId);
 
-    return ResponseEntity.ok("Ticket cancelled successfully");
+    return ResponseEntity.ok(String.format(TICKET_CANCELLED, ticketId));
   }
 }

@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.config.AppConfig;
+import com.example.config.TestConfig;
+import com.example.entity.User;
+import com.example.repository.AbstractRepositoryTest;
 import com.example.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.val;
@@ -16,10 +19,10 @@ import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppConfig.class)
-@Transactional
-class HibernateCacheTest {
+//@ExtendWith(SpringExtension.class)
+//@ContextConfiguration(classes = TestConfig.class)
+//@Transactional
+class HibernateCacheTest extends AbstractRepositoryTest {
 
   @Autowired
   private CacheManager cacheManager;
