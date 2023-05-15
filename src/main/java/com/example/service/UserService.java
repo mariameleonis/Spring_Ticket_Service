@@ -3,6 +3,7 @@ package com.example.service;
 import com.example.entity.User;
 import com.example.repository.UserRepository;
 import com.example.service.exception.BusinessException;
+import com.example.service.exception.UserNotFoundException;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,9 @@ public class UserService {
     return userRepository.findByEmail(email).orElseThrow(BusinessException::new);
   }
 
-  public User getUserById(long id) throws BusinessException {
+  public User getUserById(long id) throws UserNotFoundException {
     log.info("Getting user by id: {}", id);
-    return userRepository.findById(id).orElseThrow(BusinessException::new);
+    return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
   }
 
   public List<User> getUsersByName(String name, int pageSize, int pageNum) {

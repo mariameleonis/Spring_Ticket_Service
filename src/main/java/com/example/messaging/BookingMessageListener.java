@@ -5,6 +5,7 @@ import com.example.service.exception.BusinessException;
 import com.example.service.facade.BookingFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessageProperties;
@@ -20,14 +21,13 @@ public class BookingMessageListener implements MessageListener {
   private final RabbitTemplate rabbitTemplate;
 
   public void onMessage(Message message) {
-    // convert the message body to a Booking object
-    Booking booking = (Booking) rabbitTemplate.getMessageConverter().fromMessage(message);
 
-    // call the bookingFacade to book the ticket
+    val booking = (Booking) rabbitTemplate.getMessageConverter().fromMessage(message);
+
+
     try {
       bookingFacade.bookTicket(booking.getUserId(), booking.getEventId(), booking.getPlace());
 
-      // acknowledge the message to remove it from the queue
       rabbitTemplate.send(message.getMessageProperties().getReceivedExchange(),
           message.getMessageProperties().getReceivedRoutingKey(),
           rabbitTemplate.getMessageConverter().toMessage("Acknowledged", new MessageProperties()));

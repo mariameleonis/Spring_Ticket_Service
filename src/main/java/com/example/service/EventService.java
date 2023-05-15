@@ -3,6 +3,7 @@ package com.example.service;
 import com.example.repository.EventRepository;
 import com.example.entity.Event;
 import com.example.service.exception.BusinessException;
+import com.example.service.exception.EventNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,9 @@ public class EventService {
 
   private final EventRepository eventRepository;
 
-  public Event getById(long eventId) throws BusinessException {
+  public Event getById(long eventId) throws EventNotFoundException {
     log.info("Getting event by ID: {}", eventId);
-    return eventRepository.findById(eventId).orElseThrow(BusinessException::new);
+    return eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
   }
 
   public List<Event> getEventsByTitle(String title, int pageSize, int pageNum) {

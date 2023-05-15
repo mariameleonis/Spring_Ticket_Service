@@ -2,10 +2,12 @@ package com.example.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import jakarta.persistence.EntityManagerFactory;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableJpaRepositories(basePackages = "com.example.repository")
 @EnableTransactionManagement
+@EnableCaching
 @ComponentScan(basePackages = "com.example.service")
 public class TestConfig {
 
@@ -53,17 +56,10 @@ public class TestConfig {
   }
 
   @Bean
-  public CacheManager caffeineCacheManager() {
-    CaffeineCacheManager cacheManager = new CaffeineCacheManager();
-    cacheManager.setCaffeine(caffeineCacheBuilder());
+  public CacheManager cacheManager() {
+    CaffeineCacheManager cacheManager = new CaffeineCacheManager("myCache");
+    cacheManager.setCaffeine(Caffeine.newBuilder().recordStats());
     return cacheManager;
-  }
-
-  private Caffeine<Object, Object> caffeineCacheBuilder() {
-    return Caffeine.newBuilder()
-        .expireAfterWrite(1800, TimeUnit.MINUTES)
-        .maximumSize(100)
-        .recordStats();
   }
 
 }

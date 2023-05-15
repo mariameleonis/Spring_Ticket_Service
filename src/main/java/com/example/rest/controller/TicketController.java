@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,10 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/tickets")
 public class TicketController {
-  @Value("${rabbitmq.booking_exchange}")
+  @Value("${spring.rabbitmq.exchange}")
   private String bookingExchange;
 
-  @Value("${rabbitmq.routing_key}")
+  @Value("${spring.rabbitmq.routing_key}")
   private String routingKey;
 
   public static final String BOOKING_REQUEST_SENT = "Booking request sent";

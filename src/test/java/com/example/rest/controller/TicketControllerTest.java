@@ -1,5 +1,6 @@
 package com.example.rest.controller;
 
+import static com.example.config.WebTestConfig.objectMapperHttpMessageConverter;
 import static com.example.rest.controller.TicketController.BOOKING_REQUEST_SENT;
 import static com.example.rest.controller.TicketController.TICKET_CANCELLED;
 import static org.hamcrest.Matchers.hasSize;
@@ -18,6 +19,7 @@ import com.example.entity.User;
 import com.example.rest.model.Booking;
 import com.example.service.facade.BookingFacade;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +56,9 @@ class TicketControllerTest {
     ReflectionTestUtils.setField(ticketController, "bookingExchange", BOOKING_EXCHANGE);
     ReflectionTestUtils.setField(ticketController, "routingKey", MY_ROUTING_KEY);
 
-    mockMvc = MockMvcBuilders.standaloneSetup(ticketController).build();
+    mockMvc = MockMvcBuilders.standaloneSetup(ticketController)
+        .setMessageConverters(objectMapperHttpMessageConverter())
+        .build();
   }
 
   @Test
@@ -78,6 +82,11 @@ class TicketControllerTest {
     val user = User.builder().build();
     val ticket1 = getTicket(1L);
     val ticket2 = getTicket(2L);
+    val eventDate = LocalDate.parse("2022-01-01");
+
+    ticket1.setEvent(Event.builder()
+            .date(eventDate)
+        .build());
     val tickets = List.of(ticket1, ticket2);
 
     when(bookingFacade.getUserById(userId)).thenReturn(user);
@@ -90,6 +99,7 @@ class TicketControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(tickets.size())))
         .andExpect(jsonPath("$[0].id").value(String.valueOf(ticket1.getId())))
+        .andExpect(jsonPath("$[0].event.date").value(eventDate.toString()))
         .andExpect(jsonPath("$[1].id").value(String.valueOf(ticket2.getId())));
   }
 

@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
-public class AbstractRepositoryTest {
+public abstract class AbstractRepositoryTest {
 
   public static final long USER_ID = 1L;
   public static final String USER_EMAIL = "john.doe@example.com";

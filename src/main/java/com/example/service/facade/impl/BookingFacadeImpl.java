@@ -11,6 +11,7 @@ import com.example.service.UserService;
 import com.example.service.exception.BusinessException;
 import com.example.service.exception.EventNotFoundException;
 import com.example.service.exception.TicketNotFoundException;
+import com.example.service.exception.UserAccountNotFoundException;
 import com.example.service.exception.UserNotFoundException;
 import com.example.service.facade.BookingFacade;
 import java.math.BigDecimal;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class BookingFacadeImpl implements BookingFacade {
 
+  public static final String ERROR_WHILE_TRYING_TO_BOOK_A_TICKET = "Error while trying to book a ticket";
   private final EventService eventService;
   private final TicketService ticketService;
   private final UserService userService;
@@ -125,12 +127,45 @@ public class BookingFacadeImpl implements BookingFacade {
   @Override
   @Transactional
   public Ticket bookTicket(long userId, long eventId, int place) throws BusinessException {
-    val event = eventService.getById(eventId);
-    val userAccount = userAccountService.findByUserId(userId);
+    val event = validateEvent(eventId);
+    val user = validateUser(userId);
+    val userAccount = validateUserAccount(userId);
     validateIfEnoughMoney(event, userAccount);
     validatePlace(event, place);
     userAccount.setMoney(userAccount.getMoney().subtract(event.getTicketPrice()));
-    return ticketService.bookTicket(mapToDatabase(userAccount.getUser(), event, place));
+    return ticketService.bookTicket(mapToDatabase(user, event, place));
+  }
+
+  private User validateUser(long userId) throws BusinessException {
+    User user = null;
+    try {
+      user = userService.getUserById(userId);
+    } catch (UserNotFoundException e) {
+      throw new BusinessException(ERROR_WHILE_TRYING_TO_BOOK_A_TICKET, e);
+    }
+    return user;
+  }
+
+  private UserAccount validateUserAccount(long userId) throws BusinessException {
+    UserAccount userAccount = null;
+    try {
+      userAccount = userAccountService.findByUserId(userId);
+    } catch (UserAccountNotFoundException e) {
+      log.error(ERROR_WHILE_TRYING_TO_BOOK_A_TICKET, e);
+      throw new BusinessException(ERROR_WHILE_TRYING_TO_BOOK_A_TICKET, e);
+    }
+    return userAccount;
+  }
+
+  private Event validateEvent(long eventId) throws BusinessException {
+    Event event = null;
+    try {
+      event = eventService.getById(eventId);
+    } catch (EventNotFoundException e) {
+      log.error(ERROR_WHILE_TRYING_TO_BOOK_A_TICKET, e);
+      throw new BusinessException(ERROR_WHILE_TRYING_TO_BOOK_A_TICKET, e);
+    }
+    return event;
   }
 
   private Ticket mapToDatabase(User user, Event event, int place) {

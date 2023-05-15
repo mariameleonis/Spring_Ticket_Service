@@ -3,10 +3,8 @@ package com.example.config;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
@@ -32,7 +30,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@ComponentScan
+@ComponentScan("com.example")
 @PropertySource("classpath:application.properties")
 @EnableJpaRepositories(basePackages="com.example.repository")
 @EnableTransactionManagement
@@ -78,17 +76,10 @@ public class AppConfig {
   }
 
   @Bean
-  public CacheManager caffeineCacheManager() {
-    CaffeineCacheManager cacheManager = new CaffeineCacheManager();
-    cacheManager.setCaffeine(caffeineCacheBuilder());
+  public CacheManager cacheManager() {
+    CaffeineCacheManager cacheManager = new CaffeineCacheManager("myCache");
+    cacheManager.setCaffeine(Caffeine.newBuilder().recordStats());
     return cacheManager;
-  }
-
-  private Caffeine<Object, Object> caffeineCacheBuilder() {
-    return Caffeine.newBuilder()
-        .expireAfterWrite(1800, TimeUnit.MINUTES)
-        .maximumSize(100)
-        .recordStats();
   }
 
   @Bean
