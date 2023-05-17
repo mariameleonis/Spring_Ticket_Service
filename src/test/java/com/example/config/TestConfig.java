@@ -39,7 +39,7 @@ public class TestConfig {
   public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
     LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
     emf.setDataSource(dataSource);
-    emf.setPackagesToScan("com.example");
+    emf.setPackagesToScan("com.example.entity");
     emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
     Properties jpaProperties = new Properties();

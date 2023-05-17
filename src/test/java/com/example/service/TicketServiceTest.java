@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 
@@ -64,14 +65,16 @@ class TicketServiceTest {
     int pageNum = 1;
     val tickets = Arrays.asList(Ticket.builder().build(), Ticket.builder().build());
     val ticketsPage = new PageImpl<>(tickets);
-    val event = Event.builder().build();
+    long eventId = 23L;
 
-    when(ticketRepository.findAllByEventIdOrderByUserEmailAsc(anyLong(), any(Pageable.class))).thenReturn(ticketsPage);
+    val event = Event.builder().id(eventId).build();
+
+    when(ticketRepository.findAllByEventIdOrderByUserEmailAsc(eventId, PageRequest.of(pageNum, pageSize)))
+        .thenReturn(ticketsPage);
 
     val result = ticketService.getTicketsByEventSortedByEventDateDesc(event, pageSize, pageNum);
 
     assertEquals(tickets, result);
-    verify(ticketRepository).findAllByEventIdOrderByUserEmailAsc(anyLong(), any(Pageable.class));
   }
 
   @Test

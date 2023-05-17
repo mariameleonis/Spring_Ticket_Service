@@ -26,7 +26,9 @@ public class TicketService {
 
   public Ticket bookTicket(Ticket ticket) {
     log.info("Booking ticket: {}", ticket);
-    return ticketRepository.save(ticket);
+    val bookedTicket = ticketRepository.save(ticket);
+    log.info("Ticket booked successfully " + bookedTicket.toString());
+    return bookedTicket;
 
   }
 

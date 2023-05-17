@@ -74,7 +74,7 @@ class BookingFacadeImplTest {
   void testGetEventById_whenNotFound() throws BusinessException {
     long eventId = 1L;
 
-    when(eventService.getById(eventId)).thenThrow(new BusinessException());
+    when(eventService.getById(eventId)).thenThrow(new EventNotFoundException(eventId));
 
     assertThrows(EventNotFoundException.class, () -> bookingFacade.getEventById(eventId));
     verify(eventService, times(1)).getById(eventId);
@@ -161,7 +161,7 @@ class BookingFacadeImplTest {
   void testGetUserById_UserNotFound() throws BusinessException {
     long userId = 1L;
 
-    when(userService.getUserById(userId)).thenThrow(new BusinessException());
+    when(userService.getUserById(userId)).thenThrow(new UserNotFoundException(userId));
 
     assertThrows(UserNotFoundException.class, () -> bookingFacade.getUserById(userId));
   }

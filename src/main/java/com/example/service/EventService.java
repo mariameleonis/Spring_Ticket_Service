@@ -41,9 +41,9 @@ public class EventService {
     return eventRepository.save(event);
   }
 
-  public Event updateEvent(Event event) throws BusinessException {
+  public Event updateEvent(Event event) throws EventNotFoundException {
     log.info("Updating event: {}", event);
-    val existingEvent = eventRepository.findById(event.getId()).orElseThrow(BusinessException::new);
+    val existingEvent = eventRepository.findById(event.getId()).orElseThrow(() -> new EventNotFoundException(event.getId()));
     return eventRepository.save(map(event, existingEvent));
   }
 

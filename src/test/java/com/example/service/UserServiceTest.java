@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import com.example.repository.UserRepository;
 import com.example.entity.User;
 import com.example.service.exception.BusinessException;
+import com.example.service.exception.UserNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import lombok.val;
@@ -29,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 class UserServiceTest {
 
   public static final String EMAIL = "test@example.com";
+  public static final long USER_ID = 123L;
   @Mock
   private UserRepository userRepository;
 
@@ -108,8 +110,9 @@ class UserServiceTest {
 
   @Test
   void update() throws BusinessException {
-    val user = new User();
+    val user = User.builder().id(USER_ID).build();
 
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
     when(userRepository.save(user)).thenReturn(user);
 
     val result = userService.update(user);
@@ -120,20 +123,17 @@ class UserServiceTest {
 
   @Test
   void testUpdate_NotFound() {
-    val user = new User();
+    val user = User.builder().id(USER_ID).build();
 
-    when(userRepository.save(user)).thenThrow(new DataIntegrityViolationException("message"));
+    when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
 
-    assertThrows(BusinessException.class, () -> userService.update(user));
-    verify(userRepository, times(1)).save(user);
+    assertThrows(UserNotFoundException.class, () -> userService.update(user));
   }
 
   @Test
   void testDeleteById() {
-    long userId = 1L;
+    userService.deleteById(USER_ID);
 
-    userService.deleteById(userId);
-
-    verify(userRepository, times(1)).deleteById(userId);
+    verify(userRepository, times(1)).deleteById(USER_ID);
   }
 }

@@ -44,7 +44,8 @@ public class UserService {
 
   public User update(User user) throws BusinessException {
     log.info("Updating user: {}", user);
-    val existingUser = userRepository.findById(user.getId()).orElseThrow(BusinessException::new);
+    val existingUser = userRepository.findById(user.getId())
+        .orElseThrow(() -> new UserNotFoundException(user.getId()));
     return saveOrUpdate(map(user, existingUser));
 
   }

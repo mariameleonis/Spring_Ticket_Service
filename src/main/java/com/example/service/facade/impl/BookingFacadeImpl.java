@@ -36,12 +36,7 @@ public class BookingFacadeImpl implements BookingFacade {
 
   @Override
   public Event getEventById(long eventId) throws EventNotFoundException {
-    try {
       return eventService.getById(eventId);
-    } catch (BusinessException e) {
-      log.error("Error retrieving event by id", e);
-      throw new EventNotFoundException(eventId, e);
-    }
   }
 
   @Override
@@ -71,12 +66,7 @@ public class BookingFacadeImpl implements BookingFacade {
 
   @Override
   public User getUserById(long userId) throws UserNotFoundException {
-    try {
       return userService.getUserById(userId);
-    } catch (BusinessException e) {
-      log.error("Error retrieving user by id", e);
-      throw new UserNotFoundException(userId, e);
-    }
   }
 
   @Override
@@ -127,6 +117,7 @@ public class BookingFacadeImpl implements BookingFacade {
   @Override
   @Transactional
   public Ticket bookTicket(long userId, long eventId, int place) throws BusinessException {
+    log.debug("Start validating booking details");
     val event = validateEvent(eventId);
     val user = validateUser(userId);
     val userAccount = validateUserAccount(userId);

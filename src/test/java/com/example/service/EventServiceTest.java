@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import com.example.repository.EventRepository;
 import com.example.entity.Event;
 import com.example.service.exception.BusinessException;
+import com.example.service.exception.EventNotFoundException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
@@ -54,7 +55,7 @@ class EventServiceTest {
 
     when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
 
-    assertThrows(BusinessException.class, () -> eventService.getById(eventId));
+    assertThrows(EventNotFoundException.class, () -> eventService.getById(eventId));
   }
 
   @Test
@@ -100,7 +101,13 @@ class EventServiceTest {
   }
 
   @Test
-  void testUpdateEvent() throws BusinessException {
+  void testUpdateEvent() throws EventNotFoundException {
+    val existingEvent = Event.builder()
+        .id(testEvent.getId())
+        .title("Existing Event")
+        .build();
+
+    when(eventRepository.findById(testEvent.getId())).thenReturn(Optional.of(existingEvent));
     when(eventRepository.save(testEvent)).thenReturn(testEvent);
 
     val result = eventService.updateEvent(testEvent);

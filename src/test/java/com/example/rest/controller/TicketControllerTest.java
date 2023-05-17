@@ -4,6 +4,7 @@ import static com.example.config.WebTestConfig.objectMapperHttpMessageConverter;
 import static com.example.rest.controller.TicketController.BOOKING_REQUEST_SENT;
 import static com.example.rest.controller.TicketController.TICKET_CANCELLED;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -69,7 +70,7 @@ class TicketControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(booking)))
         .andExpect(status().isOk())
-        .andExpect(content().string(BOOKING_REQUEST_SENT));
+        .andExpect(content().string(asJsonString(BOOKING_REQUEST_SENT)));
 
     verify(rabbitTemplate).convertAndSend(BOOKING_EXCHANGE, MY_ROUTING_KEY, booking);
   }
@@ -130,11 +131,13 @@ class TicketControllerTest {
   void testCancelTicket() throws Exception {
     val ticketId = 123L;
 
-    mockMvc.perform(delete(BASE_URL + "/" + ticketId))
+    val result = mockMvc.perform(delete(BASE_URL + "/" + ticketId))
         .andExpect(status().isOk())
-        .andExpect(content().string(String.format(TICKET_CANCELLED, ticketId)));
+        .andReturn();
+        //.andExpect(content().string(String.format(TICKET_CANCELLED, ticketId)));
 
     verify(bookingFacade).cancelTicket(ticketId);
+    assertEquals(asJsonString(String.format(TICKET_CANCELLED, ticketId)), result.getResponse().getContentAsString());
   }
 
   private Ticket getTicket(long ticketId) {

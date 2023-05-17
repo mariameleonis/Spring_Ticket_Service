@@ -1,21 +1,35 @@
 package com.example.config;
 
+import com.example.messaging.BookingMessageListener;
+import com.example.rest.model.Booking;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.val;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.amqp.support.converter.DefaultJackson2JavaTypeMapper;
+import org.springframework.amqp.support.converter.Jackson2JavaTypeMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
+@EnableRabbit
+@ComponentScan("com.example")
 public class RabbitMQConfig {
 
   @Value("${spring.rabbitmq.host}")
@@ -39,6 +53,9 @@ public class RabbitMQConfig {
   @Value("${spring.rabbitmq.queue}")
   private String rabbitMqQueue;
 
+  @Autowired
+  private BookingMessageListener bookingMessageListener;
+
   @Bean
   public ConnectionFactory connectionFactory() {
     CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
@@ -57,8 +74,17 @@ public class RabbitMQConfig {
   }
 
   @Bean
-  public MessageConverter messageConverter() {
-    return new Jackson2JsonMessageConverter();
+  public Jackson2JsonMessageConverter messageConverter() {
+    Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
+
+    DefaultJackson2JavaTypeMapper typeMapper = new DefaultJackson2JavaTypeMapper();
+    typeMapper.setTypePrecedence(Jackson2JavaTypeMapper.TypePrecedence.TYPE_ID);
+
+    typeMapper.setIdClassMapping(Collections.singletonMap("booking", Booking.class));
+
+    converter.setJavaTypeMapper(typeMapper);
+
+    return converter;
   }
 
   @Bean
@@ -75,4 +101,14 @@ public class RabbitMQConfig {
   public Binding binding(Queue queue, DirectExchange exchange) {
     return BindingBuilder.bind(queue).to(exchange).with(rabbitMqRoutingKey);
   }
+
+  @Bean
+  SimpleMessageListenerContainer container(ConnectionFactory connectionFactory) {
+    val container = new SimpleMessageListenerContainer();
+    container.setConnectionFactory(connectionFactory);
+    container.setQueueNames(rabbitMqQueue);
+    container.setMessageListener(bookingMessageListener);
+    return container;
+  }
+
 }

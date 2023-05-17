@@ -2,7 +2,7 @@ package com.example.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.example.config.RabbitMQConfig;
+import com.example.config.RabbitMQTestConfiguration;
 import com.example.rest.model.Booking;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
@@ -26,7 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @ExtendWith(SpringExtension.class)
 @Testcontainers
-@ContextConfiguration(classes = RabbitMQConfig.class)
+@ContextConfiguration(classes = RabbitMQTestConfiguration.class)
 class AsyncBookingIntegrationTest {
 
   private static final String EXCHANGE_NAME = "booking-exchange";
